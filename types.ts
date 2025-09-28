@@ -1,4 +1,3 @@
-
 export enum Page {
   Home = 'home',
   Category = 'category',
@@ -18,6 +17,7 @@ export interface Product {
   image: string;
   sales: number;
   category: string;
+  description: string;
 }
 
 export enum BountyStatus {
@@ -50,6 +50,8 @@ export interface Order {
   status: OrderStatus;
   amount: number;
   date: string;
+  userId: string;
+  userName: string;
 }
 
 export interface User {
@@ -58,4 +60,45 @@ export interface User {
   email: string;
   role: 'Admin' | 'User';
   status: 'Active' | 'Frozen';
+}
+
+export enum ComplaintStatus {
+  Pending = '待处理',
+  InProgress = '处理中',
+  Resolved = '已解决',
+}
+
+export interface Complaint {
+  id: string;
+  orderId: string;
+  userId: string;
+  userName: string;
+  subject: string;
+  details: string;
+  status: ComplaintStatus;
+  createdAt: string;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  leaderName: string;
+  leaderId: string;
+  memberCount: number;
+  status: 'Active' | 'Frozen';
+  createdAt: string;
+}
+
+export interface Announcement {
+  id: string;
+  content: string;
+  createdAt: string;
+  isActive: boolean;
+}
+
+export interface AdSlot {
+  id: string;
+  name: string;
+  content: string;
+  link: string;
 }

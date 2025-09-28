@@ -1,6 +1,13 @@
-
 import React, { useState } from 'react';
 import { User } from '../types';
+import Modal from './Modal';
+import UserEditForm from './UserEditForm';
+import SettingsPage from './SettingsPage';
+import ComplaintManagement from './ComplaintManagement';
+import OrderManagement from './OrderManagement';
+import ProductManagement from './ProductManagement';
+import TeamManagement from './TeamManagement';
+import AdManagement from './AdManagement';
 
 const mockUsers: User[] = [
     { id: '1', name: '玩家_8888', email: 'user1@example.com', role: 'User', status: 'Active' },
@@ -36,6 +43,36 @@ const AdminSidebar: React.FC<{activeItem: string, setActiveItem: (item: string) 
 
 const UserManagement: React.FC = () => {
     const [users, setUsers] = useState<User[]>(mockUsers);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
+
+    const handleEditClick = (user: User) => {
+        setEditingUser(user);
+    };
+
+    const handleCloseModal = () => {
+        setEditingUser(null);
+    };
+
+    const handleSaveUser = (updatedUser: User) => {
+        setUsers(currentUsers => currentUsers.map(u => (u.id === updatedUser.id ? updatedUser : u)));
+        handleCloseModal();
+    };
+
+    const handleToggleStatus = (userId: string) => {
+        setUsers(currentUsers =>
+            currentUsers.map(user =>
+                user.id === userId
+                    ? { ...user, status: user.status === 'Active' ? 'Frozen' : 'Active' }
+                    : user
+            )
+        );
+    };
+
+    const handleDeleteUser = (userId: string) => {
+        if (window.confirm('您确定要删除该用户吗？此操作不可撤销。')) {
+            setUsers(currentUsers => currentUsers.filter(user => user.id !== userId));
+        }
+    };
 
     return (
         <div>
@@ -67,27 +104,50 @@ const UserManagement: React.FC = () => {
                                     </span>
                                 </td>
                                 <td className="px-5 py-4 border-b border-dark-border text-sm space-x-2">
-                                    <button className="text-blue-400 hover:underline">编辑</button>
-                                    <button className="text-yellow-400 hover:underline">{user.status === 'Active' ? '冻结' : '解冻'}</button>
-                                    <button className="text-red-400 hover:underline">删除</button>
+                                    <button onClick={() => handleEditClick(user)} className="text-blue-400 hover:underline">编辑</button>
+                                    <button onClick={() => handleToggleStatus(user.id)} className="text-yellow-400 hover:underline">
+                                        {user.status === 'Active' ? '冻结' : '解冻'}
+                                    </button>
+                                    <button onClick={() => handleDeleteUser(user.id)} className="text-red-400 hover:underline">删除</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+            {editingUser && (
+                <Modal isOpen={!!editingUser} onClose={handleCloseModal}>
+                    <UserEditForm 
+                        user={editingUser}
+                        onSave={handleSaveUser}
+                        onClose={handleCloseModal}
+                    />
+                </Modal>
+            )}
         </div>
     );
 };
 
 
 const AdminPage: React.FC = () => {
-    const [activeItem, setActiveItem] = useState('用户管理');
+    const [activeItem, setActiveItem] = useState('广告管理');
 
     const renderContent = () => {
         switch (activeItem) {
+            case '广告管理':
+                return <AdManagement />;
             case '用户管理':
                 return <UserManagement />;
+            case '团队管理':
+                return <TeamManagement />;
+            case '商品管理':
+                return <ProductManagement />;
+            case '订单管理':
+                return <OrderManagement />;
+            case '客诉管理':
+                return <ComplaintManagement />;
+            case '后台设置':
+                return <SettingsPage />;
             default:
                 return <div className="text-center p-10"><h3 className="text-2xl">{activeItem}</h3><p className="text-dark-text-secondary mt-2">此模块内容待开发。</p></div>;
         }

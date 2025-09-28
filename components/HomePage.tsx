@@ -5,17 +5,18 @@ import Card from './Card';
 
 interface HomePageProps {
   currentUserRole: UserRole;
+  onProductSelect: (product: Product) => void;
 }
 
 const mockHotSales: Product[] = [
-  { id: '1', name: '大师级陪练', price: 50, image: 'https://picsum.photos/seed/hotsale1/300/200', sales: 1200, category: '陪练' },
-  { id: '2', name: '极速上分套餐', price: 100, image: 'https://picsum.photos/seed/hotsale2/300/200', sales: 950, category: '上分' },
-  { id: '3', name: '团队开黑语音', price: 20, image: 'https://picsum.photos/seed/hotsale3/300/200', sales: 2500, category: '语音' },
+  { id: '1', name: '大师级陪练', price: 50, image: 'https://picsum.photos/seed/hotsale1/300/200', sales: 1200, category: '陪练', description: '由顶尖大师级玩家提供一对一陪练服务，快速提升您的游戏技巧和意识。' },
+  { id: '2', name: '极速上分套餐', price: 100, image: 'https://picsum.photos/seed/hotsale2/300/200', sales: 950, category: '上分', description: '专业团队为您提供高效的上分服务，安全可靠，助您轻松达到理想段位。' },
+  { id: '3', name: '团队开黑语音', price: 20, image: 'https://picsum.photos/seed/hotsale3/300/200', sales: 2500, category: '语音', description: '加入我们的语音频道，与队友实时沟通，享受团队游戏的乐趣。' },
 ];
 
 const mockNewbieTrials: Product[] = [
-  { id: '4', name: '新手体验陪练', price: 5, image: 'https://picsum.photos/seed/newbie1/300/200', sales: 800, category: '新手试炼' },
-  { id: '5', name: '首单优惠上分', price: 10, image: 'https://picsum.photos/seed/newbie2/300/200', sales: 650, category: '新手试炼' },
+  { id: '4', name: '新手体验陪练', price: 5, image: 'https://picsum.photos/seed/newbie1/300/200', sales: 800, category: '新手试炼', description: '专为新手玩家设计的体验套餐，以优惠价格感受专业陪练的魅力。' },
+  { id: '5', name: '首单优惠上分', price: 10, image: 'https://picsum.photos/seed/newbie2/300/200', sales: 650, category: '新手试炼', description: '首次下单专享优惠，体验快速上分的快感，物超所值。' },
 ];
 
 const BossCard: React.FC = () => (
@@ -60,7 +61,7 @@ const HitterCard: React.FC = () => {
 };
 
 
-const HomePage: React.FC<HomePageProps> = ({ currentUserRole }) => {
+const HomePage: React.FC<HomePageProps> = ({ currentUserRole, onProductSelect }) => {
   return (
     <div className="container mx-auto px-4 space-y-6">
       <Card>
@@ -96,7 +97,9 @@ const HomePage: React.FC<HomePageProps> = ({ currentUserRole }) => {
               <div className="p-3">
                 <h4 className="font-semibold truncate">{item.name}</h4>
                 <p className="text-lg font-bold text-red-400 mt-1">{item.price}元</p>
-                <button className="mt-2 w-full bg-brand-primary hover:bg-brand-secondary text-white font-bold py-1 px-3 rounded-lg text-sm transition-colors">
+                <button
+                  onClick={() => onProductSelect(item)}
+                  className="mt-2 w-full bg-brand-primary hover:bg-brand-secondary text-white font-bold py-1 px-3 rounded-lg text-sm transition-colors">
                   下单
                 </button>
               </div>

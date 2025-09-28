@@ -3,10 +3,11 @@ import React from 'react';
 import { Order, OrderStatus } from '../types';
 import Card from './Card';
 
+// FIX: Add missing userId and userName properties to mock orders to match the Order type.
 const mockOrders: Order[] = [
-    { id: '1', productName: '大师级陪练', status: OrderStatus.Completed, amount: 50, date: '2023-10-26' },
-    { id: '2', productName: '极速上分套餐', status: OrderStatus.InProgress, amount: 100, date: '2023-10-27' },
-    { id: '3', productName: '团队开黑语音', status: OrderStatus.PendingAccept, amount: 20, date: '2023-10-28' },
+    { id: '1', productName: '大师级陪练', status: OrderStatus.Completed, amount: 50, date: '2023-10-26', userId: '12345678', userName: '玩家_8888' },
+    { id: '2', productName: '极速上分套餐', status: OrderStatus.InProgress, amount: 100, date: '2023-10-27', userId: '12345678', userName: '玩家_8888' },
+    { id: '3', productName: '团队开黑语音', status: OrderStatus.PendingAccept, amount: 20, date: '2023-10-28', userId: '12345678', userName: '玩家_8888' },
 ];
 
 const getStatusColor = (status: OrderStatus) => {
