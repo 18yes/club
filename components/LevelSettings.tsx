@@ -1,105 +1,115 @@
+
 import React, { useState } from 'react';
+import { HitterIdentity, HitterIdentitySetting, HitterLevelSetting } from '../types';
+import { mockIdentitySettings, mockHitterLevelSettings, mockBossLevelSettings, allProducts } from '../mockData';
 import Card from './Card';
 import CloseIcon from './icons/CloseIcon';
 
-const LevelManager: React.FC<{ title: string, initialLevels: string[] }> = ({ title, initialLevels }) => {
-    const [levels, setLevels] = useState(initialLevels);
-    const [newLevel, setNewLevel] = useState('');
+const IdentityLevelSettings: React.FC = () => {
+    const [identitySettings, setIdentitySettings] = useState<HitterIdentitySetting[]>(mockIdentitySettings);
+    const [hitterLevels, setHitterLevels] = useState<HitterLevelSetting[]>(mockHitterLevelSettings);
+    const [bossLevels, setBossLevels] = useState<HitterLevelSetting[]>(mockBossLevelSettings);
 
-    const handleAddLevel = () => {
-        if (newLevel.trim() && !levels.includes(newLevel.trim())) {
-            setLevels([...levels, newLevel.trim()]);
-            setNewLevel('');
-        }
+    const handleSave = () => {
+        alert("身份与等级设置已保存！");
+        console.log({ identitySettings, hitterLevels, bossLevels });
     };
     
-    const handleRemoveLevel = (levelToRemove: string) => {
-        setLevels(levels.filter(level => level !== levelToRemove));
+    // A generic handler for changing properties in an array of settings
+    const handleSettingChange = <T extends {}>(
+        setter: React.Dispatch<React.SetStateAction<T[]>>, 
+        index: number, 
+        field: keyof T, 
+        value: any
+    ) => {
+        setter(prev => {
+            const newSettings = [...prev];
+            newSettings[index] = { ...newSettings[index], [field]: value };
+            return newSettings;
+        });
     };
 
     return (
-        <Card>
-            <h4 className="font-semibold text-brand-secondary mb-4">{title}</h4>
-            <div className="space-y-2 mb-4">
-                {levels.map(level => (
-                    <div key={level} className="flex items-center justify-between bg-dark-bg p-2 rounded-md">
-                        <span>{level}</span>
-                        <button onClick={() => handleRemoveLevel(level)} className="p-1 rounded-full hover:bg-dark-border">
-                           <CloseIcon />
-                        </button>
+        <div className="space-y-8">
+            {/* Hitter Identity Settings */}
+            <div>
+                <h3 className="text-xl font-semibold mb-4">打手身份设置</h3>
+                <Card>
+                    <div className="space-y-4">
+                        {identitySettings.map((setting, index) => (
+                            <div key={setting.identity} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center p-3 bg-dark-bg rounded-lg">
+                                <span className="font-semibold text-brand-secondary">{setting.name}</span>
+                                <div>
+                                    <label className="text-xs text-dark-text-secondary block mb-1">认证商品</label>
+                                    <select 
+                                        value={setting.requiredProductId || ''} 
+                                        onChange={(e) => handleSettingChange(setIdentitySettings, index, 'requiredProductId', e.target.value)}
+                                        className="w-full bg-dark-bg border border-dark-border rounded-md shadow-sm py-1 px-2 text-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                                    >
+                                        <option value="">无</option>
+                                        {allProducts.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                    </select>
+                                </div>
+                                 <div>
+                                    <label className="text-xs text-dark-text-secondary block mb-1">头像底部图标URL</label>
+                                    <input
+                                        type="text"
+                                        placeholder="https://.../icon.png"
+                                        value={setting.iconUrl}
+                                        onChange={(e) => handleSettingChange(setIdentitySettings, index, 'iconUrl', e.target.value)}
+                                        className="w-full bg-dark-bg border border-dark-border rounded-md shadow-sm py-1 px-2 text-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                                    />
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                ))}
+                </Card>
             </div>
-            <div className="flex space-x-2">
-                <input
-                    type="text"
-                    value={newLevel}
-                    onChange={(e) => setNewLevel(e.target.value)}
-                    placeholder="添加新等级..."
-                    className="flex-grow bg-dark-bg border border-dark-border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
-                />
-                <button onClick={handleAddLevel} className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500 transition-colors">
-                    添加
-                </button>
-            </div>
-        </Card>
-    )
-}
 
-const LevelSettings: React.FC = () => {
-    const [vipSettings, setVipSettings] = useState({
-        waitTime: '30',
-        superWaitTime: '15'
-    });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setVipSettings(prev => ({...prev, [name]: value}));
-    };
-
-    return (
-        <div className="space-y-6">
-            <h3 className="text-xl font-semibold">等级设置</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <LevelManager title="老板等级名称" initialLevels={['1级老板', '2级老板', '3级老板']} />
-                <LevelManager title="打手等级名称" initialLevels={['1级打手', '2级打手', '3级打手']} />
-            </div>
-             <Card>
-                <h4 className="font-semibold text-brand-secondary mb-4">VIP打手设置</h4>
-                <div className="space-y-4">
-                     <div>
-                        <label htmlFor="waitTime" className="block text-sm font-medium text-dark-text-secondary">VIP打手等待时长 (秒)</label>
-                        <input
-                            type="number"
-                            id="waitTime"
-                            name="waitTime"
-                            value={vipSettings.waitTime}
-                            onChange={handleChange}
-                            className="mt-1 block w-full max-w-xs bg-dark-bg border border-dark-border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
-                        />
+            {/* Hitter Level Settings */}
+            <div>
+                <h3 className="text-xl font-semibold mb-4">打手等级设置</h3>
+                <Card>
+                    <div className="space-y-2">
+                         {hitterLevels.map((level, index) => (
+                            <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center p-3 bg-dark-bg rounded-lg">
+                                <input type="text" value={level.name} onChange={e => handleSettingChange(setHitterLevels, index, 'name', e.target.value)} className="w-full bg-dark-bg border border-dark-border rounded-md py-1 px-2 text-sm" />
+                                <input type="number" value={level.requiredIncome} onChange={e => handleSettingChange(setHitterLevels, index, 'requiredIncome', Number(e.target.value))} className="w-full bg-dark-bg border border-dark-border rounded-md py-1 px-2 text-sm" placeholder="所需创收" />
+                                <div className="flex items-center gap-2">
+                                    <input type="text" value={level.haloColor} onChange={e => handleSettingChange(setHitterLevels, index, 'haloColor', e.target.value)} className="w-full bg-dark-bg border border-dark-border rounded-md py-1 px-2 text-sm" placeholder="光环颜色 (#FFFFFF)" />
+                                    <div className="w-6 h-6 rounded-full border border-dark-border" style={{ backgroundColor: level.haloColor }}></div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                     <div>
-                        <label htmlFor="superWaitTime" className="block text-sm font-medium text-dark-text-secondary">超级VIP打手等待时长 (秒)</label>
-                        <input
-                            type="number"
-                            id="superWaitTime"
-                            name="superWaitTime"
-                            value={vipSettings.superWaitTime}
-                            onChange={handleChange}
-                            className="mt-1 block w-full max-w-xs bg-dark-bg border border-dark-border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
-                        />
+                </Card>
+            </div>
+            
+             {/* Boss Level Settings */}
+            <div>
+                <h3 className="text-xl font-semibold mb-4">老板等级设置</h3>
+                 <Card>
+                    <div className="space-y-2">
+                         {bossLevels.map((level, index) => (
+                            <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center p-3 bg-dark-bg rounded-lg">
+                                <input type="text" value={level.name} onChange={e => handleSettingChange(setBossLevels, index, 'name', e.target.value)} className="w-full bg-dark-bg border border-dark-border rounded-md py-1 px-2 text-sm" />
+                                <input type="number" value={level.requiredIncome} onChange={e => handleSettingChange(setBossLevels, index, 'requiredIncome', Number(e.target.value))} className="w-full bg-dark-bg border border-dark-border rounded-md py-1 px-2 text-sm" placeholder="所需成长值" />
+                            </div>
+                        ))}
                     </div>
-                </div>
-            </Card>
-            <div className="flex justify-end mt-6">
+                </Card>
+            </div>
+
+            <div className="flex justify-end mt-8">
                 <button
+                    onClick={handleSave}
                     className="px-6 py-2 bg-brand-primary text-white font-semibold rounded-lg hover:bg-brand-secondary transition-colors"
                 >
-                    保存等级设置
+                    保存所有设置
                 </button>
             </div>
         </div>
     );
 };
 
-export default LevelSettings;
+export default IdentityLevelSettings;

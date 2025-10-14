@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { User } from '../types';
 import Modal from './Modal';
@@ -8,13 +9,8 @@ import OrderManagement from './OrderManagement';
 import ProductManagement from './ProductManagement';
 import TeamManagement from './TeamManagement';
 import AdManagement from './AdManagement';
+import { allUsers } from '../mockData';
 
-const mockUsers: User[] = [
-    { id: '1', name: '玩家_8888', email: 'user1@example.com', role: 'User', status: 'Active' },
-    { id: '2', name: '大神_001', email: 'hitter1@example.com', role: 'User', status: 'Active' },
-    { id: '3', name: '土豪哥', email: 'boss1@example.com', role: 'User', status: 'Frozen' },
-    { id: '4', name: '管理员A', email: 'admin@example.com', role: 'Admin', status: 'Active' },
-];
 
 const AdminSidebar: React.FC<{activeItem: string, setActiveItem: (item: string) => void}> = ({ activeItem, setActiveItem }) => {
     const navItems = ['广告管理', '用户管理', '团队管理', '商品管理', '订单管理', '客诉管理', '后台设置'];
@@ -42,8 +38,10 @@ const AdminSidebar: React.FC<{activeItem: string, setActiveItem: (item: string) 
 };
 
 const UserManagement: React.FC = () => {
-    const [users, setUsers] = useState<User[]>(mockUsers);
+    const [users, setUsers] = useState<User[]>(allUsers);
     const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [payoutUser, setPayoutUser] = useState<User | null>(null);
+    const [payoutAmount, setPayoutAmount] = useState<string>('');
 
     const handleEditClick = (user: User) => {
         setEditingUser(user);
@@ -72,6 +70,29 @@ const UserManagement: React.FC = () => {
         if (window.confirm('您确定要删除该用户吗？此操作不可撤销。')) {
             setUsers(currentUsers => currentUsers.filter(user => user.id !== userId));
         }
+    };
+
+    const handlePayoutClick = (user: User) => {
+        setPayoutUser(user);
+        setPayoutAmount('');
+    };
+
+    const handleConfirmPayout = () => {
+        const amount = parseFloat(payoutAmount);
+        if (!payoutUser || isNaN(amount) || amount <= 0) {
+            alert("请输入有效的正数赔付金额");
+            return;
+        }
+
+        setUsers(currentUsers =>
+            currentUsers.map(u =>
+                u.id === payoutUser.id
+                    ? { ...u, balance: u.balance - amount }
+                    : u
+            )
+        );
+        alert(`已成功从用户 ${payoutUser.name} 的余额中扣除赔付金额 ¥${amount}`);
+        setPayoutUser(null);
     };
 
     return (
@@ -105,6 +126,7 @@ const UserManagement: React.FC = () => {
                                 </td>
                                 <td className="px-5 py-4 border-b border-dark-border text-sm space-x-2">
                                     <button onClick={() => handleEditClick(user)} className="text-blue-400 hover:underline">编辑</button>
+                                    <button onClick={() => handlePayoutClick(user)} className="text-orange-400 hover:underline">赔付</button>
                                     <button onClick={() => handleToggleStatus(user.id)} className="text-yellow-400 hover:underline">
                                         {user.status === 'Active' ? '冻结' : '解冻'}
                                     </button>
@@ -122,6 +144,29 @@ const UserManagement: React.FC = () => {
                         onSave={handleSaveUser}
                         onClose={handleCloseModal}
                     />
+                </Modal>
+            )}
+             {payoutUser && (
+                <Modal isOpen={!!payoutUser} onClose={() => setPayoutUser(null)}>
+                    <div className="space-y-4">
+                        <h2 className="text-xl font-bold text-center text-brand-secondary">执行赔付</h2>
+                        <p className="text-center">为用户 <span className="font-semibold text-dark-text-primary">{payoutUser.name}</span> 执行赔付操作。</p>
+                        <div>
+                            <label htmlFor="payoutAmount" className="block text-sm font-medium text-dark-text-secondary">赔付金额 (元)</label>
+                            <input
+                                type="number"
+                                id="payoutAmount"
+                                value={payoutAmount}
+                                onChange={(e) => setPayoutAmount(e.target.value)}
+                                className="mt-1 block w-full bg-dark-bg border border-dark-border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                                placeholder="输入扣除金额"
+                            />
+                        </div>
+                        <div className="flex justify-end space-x-3 pt-4">
+                            <button onClick={() => setPayoutUser(null)} className="px-4 py-2 rounded-md text-sm font-medium bg-dark-border hover:bg-gray-600 transition-colors">取消</button>
+                            <button onClick={handleConfirmPayout} className="px-4 py-2 rounded-md text-sm font-medium bg-brand-primary hover:bg-brand-secondary transition-colors">确认赔付</button>
+                        </div>
+                    </div>
                 </Modal>
             )}
         </div>

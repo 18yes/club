@@ -1,14 +1,7 @@
+
 import React, { useState } from 'react';
 import { Order, OrderStatus } from '../types';
-
-const mockOrders: Order[] = [
-    { id: 'O1', productName: '大师级陪练', status: OrderStatus.Completed, amount: 50, date: '2023-10-26', userId: 'U1', userName: '玩家_8888' },
-    { id: 'O2', productName: '极速上分套餐', status: OrderStatus.InProgress, amount: 100, date: '2023-10-27', userId: 'U2', userName: '大神_001' },
-    { id: 'O3', productName: '团队开黑语音', status: OrderStatus.PendingSettlement, amount: 20, date: '2023-10-28', userId: 'U3', userName: '土豪哥' },
-    { id: 'O4', productName: '大神带队通关', status: OrderStatus.InProgress, amount: 80, date: '2023-10-29', userId: 'U1', userName: '玩家_8888' },
-    { id: 'O5', productName: '王者晋级赛', status: OrderStatus.PendingSettlement, amount: 120, date: '2023-10-30', userId: 'U4', userName: '管理员A' },
-    { id: 'O6', productName: '新手体验陪练', status: OrderStatus.Completed, amount: 5, date: '2023-10-30', userId: 'U3', userName: '土豪哥' },
-];
+import { allOrders } from '../mockData';
 
 const getStatusInfo = (status: OrderStatus): { text: string; color: string } => {
     switch (status) {
@@ -21,7 +14,7 @@ const getStatusInfo = (status: OrderStatus): { text: string; color: string } => 
 };
 
 const OrderManagement: React.FC = () => {
-    const [orders, setOrders] = useState<Order[]>(mockOrders);
+    const [orders, setOrders] = useState<Order[]>(allOrders);
     const [filter, setFilter] = useState<string>('全部');
 
     const handleUpdateStatus = (orderId: string, newStatus: OrderStatus) => {
@@ -75,7 +68,7 @@ const OrderManagement: React.FC = () => {
                             <tr key={order.id} className="hover:bg-dark-border">
                                 <td className="px-5 py-4 border-b border-dark-border text-sm">
                                     <p className="font-semibold">{order.productName}</p>
-                                    <p className="text-xs text-gray-400">ID: {order.id} | {order.date}</p>
+                                    <p className="text-xs text-gray-400">ID: {order.id} | {order.orderTime}</p>
                                 </td>
                                 <td className="px-5 py-4 border-b border-dark-border text-sm">
                                     <p>{order.userName}</p>

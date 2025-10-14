@@ -1,16 +1,12 @@
+
 import React, { useState } from 'react';
 import { Team } from '../types';
 import Modal from './Modal';
 import TeamForm from './TeamForm';
-
-const mockTeams: Team[] = [
-    { id: 'T1', name: '王者荣耀冲分队', leaderName: '大神_001', leaderId: 'U2', memberCount: 5, status: 'Active', createdAt: '2023-10-25' },
-    { id: 'T2', name: '休闲娱乐开车群', leaderName: '玩家_8888', leaderId: 'U1', memberCount: 23, status: 'Active', createdAt: '2023-10-20' },
-    { id: 'T3', name: 'PVE开荒团', leaderName: '土豪哥', leaderId: 'U3', memberCount: 10, status: 'Frozen', createdAt: '2023-09-15' },
-];
+import { allTeams } from '../mockData';
 
 const TeamManagement: React.FC = () => {
-    const [teams, setTeams] = useState<Team[]>(mockTeams);
+    const [teams, setTeams] = useState<Team[]>(allTeams);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTeam, setEditingTeam] = useState<Partial<Team> | null>(null);
 

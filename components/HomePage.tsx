@@ -2,33 +2,75 @@
 import React, { useState } from 'react';
 import { UserRole, Product } from '../types';
 import Card from './Card';
+import { allProducts } from '../mockData';
 
 interface HomePageProps {
   currentUserRole: UserRole;
   onProductSelect: (product: Product) => void;
 }
 
-const mockHotSales: Product[] = [
-  { id: '1', name: '大师级陪练', price: 50, image: 'https://picsum.photos/seed/hotsale1/300/200', sales: 1200, category: '陪练', description: '由顶尖大师级玩家提供一对一陪练服务，快速提升您的游戏技巧和意识。' },
-  { id: '2', name: '极速上分套餐', price: 100, image: 'https://picsum.photos/seed/hotsale2/300/200', sales: 950, category: '上分', description: '专业团队为您提供高效的上分服务，安全可靠，助您轻松达到理想段位。' },
-  { id: '3', name: '团队开黑语音', price: 20, image: 'https://picsum.photos/seed/hotsale3/300/200', sales: 2500, category: '语音', description: '加入我们的语音频道，与队友实时沟通，享受团队游戏的乐趣。' },
-];
+const mockHotSales: Product[] = allProducts.slice(0, 3);
+const mockNewbieTrials: Product[] = allProducts.slice(3, 5);
 
-const mockNewbieTrials: Product[] = [
-  { id: '4', name: '新手体验陪练', price: 5, image: 'https://picsum.photos/seed/newbie1/300/200', sales: 800, category: '新手试炼', description: '专为新手玩家设计的体验套餐，以优惠价格感受专业陪练的魅力。' },
-  { id: '5', name: '首单优惠上分', price: 10, image: 'https://picsum.photos/seed/newbie2/300/200', sales: 650, category: '新手试炼', description: '首次下单专享优惠，体验快速上分的快感，物超所值。' },
-];
 
-const BossCard: React.FC = () => (
-  <Card>
-    <h3 className="font-bold text-lg text-brand-secondary">老板卡片</h3>
-    <p className="text-sm text-dark-text-secondary mt-2">等级: 尊贵VIP 5</p>
-    <p className="text-sm text-dark-text-secondary">装饰: 黄金龙王</p>
-    <button className="mt-4 w-full bg-brand-primary hover:bg-brand-secondary text-white font-bold py-2 px-4 rounded-lg transition-colors">
-      提升等级
-    </button>
-  </Card>
-);
+const BossCard: React.FC = () => {
+  const currentGrowth = 19308;
+  const targetGrowth = 50000;
+  const progressPercentage = (currentGrowth / targetGrowth) * 100;
+
+  return (
+    // Add top margin to make space for the avatar that overflows the card
+    <div className="relative mt-10">
+      <Card className="relative overflow-visible pt-12 text-center">
+        {/* Avatar positioned absolutely relative to the card */}
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2">
+          <img
+            src="https://picsum.photos/seed/boss-user/200" // A consistent placeholder
+            alt="用户头像"
+            className="w-20 h-20 rounded-full object-cover ring-4 ring-dark-card"
+          />
+        </div>
+
+        {/* User Name and Level Badge */}
+        <div className="flex justify-center items-center gap-3">
+          <h3 className="text-2xl font-bold">景彡子hǎorěn</h3>
+          <div className="bg-dark-border px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-1 shadow-sm">
+            <span className="font-bold text-yellow-400 text-base">V</span>
+            <span>钻石老板</span>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mt-6 px-2">
+          <div className="flex justify-between items-center text-xs text-dark-text-secondary mb-1">
+            <span>钻石老板</span>
+            <span>至尊老板</span>
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-5 relative overflow-hidden">
+            <div
+              className="bg-purple-500 h-full rounded-full flex items-center justify-center text-xs font-bold text-white transition-all duration-500"
+              style={{ width: `${progressPercentage}%` }}
+            >
+            </div>
+             <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">
+                {progressPercentage.toFixed(3)}%
+             </span>
+          </div>
+        </div>
+
+        {/* Growth Details */}
+        <div className="mt-4 text-sm text-dark-text-secondary space-y-1">
+          <p>
+            当前等级: 钻石老板 (<span className="text-brand-secondary cursor-pointer hover:underline">查看权益</span>) 当前成长值: <span className="text-dark-text-primary font-semibold">{currentGrowth}</span>
+          </p>
+          <p>
+            达到 <span className="text-dark-text-primary font-semibold">{targetGrowth}</span> 成长值升至 至尊老板 (<span className="text-brand-secondary cursor-pointer hover:underline">查看权益</span>)
+          </p>
+        </div>
+      </Card>
+    </div>
+  );
+};
 
 const HitterCard: React.FC = () => {
   const [isOnline, setIsOnline] = useState(false);
@@ -79,8 +121,8 @@ const HomePage: React.FC<HomePageProps> = ({ currentUserRole, onProductSelect })
         <h3 className="font-bold text-lg text-center text-brand-secondary">热销榜</h3>
         <div className="mt-4 grid grid-cols-3 gap-4">
           {mockHotSales.map((item, index) => (
-            <div key={item.id} className="text-center">
-              <img src={item.image} alt={item.name} className="w-full h-20 object-cover rounded-lg" />
+            <div key={item.id} className="text-center cursor-pointer" onClick={() => onProductSelect(item)}>
+              <img src={item.images[0]} alt={item.name} className="w-full h-20 object-cover rounded-lg" />
               <p className="text-sm font-semibold mt-2 truncate">TOP {index + 1}: {item.name}</p>
               <p className="text-xs text-red-400">{item.price}元</p>
             </div>
@@ -93,7 +135,7 @@ const HomePage: React.FC<HomePageProps> = ({ currentUserRole, onProductSelect })
         <div className="grid grid-cols-2 gap-4">
           {mockNewbieTrials.map(item => (
             <Card key={item.id} padding="p-0">
-              <img src={item.image} alt={item.name} className="w-full h-24 object-cover rounded-t-lg" />
+              <img src={item.images[0]} alt={item.name} className="w-full h-24 object-cover rounded-t-lg" />
               <div className="p-3">
                 <h4 className="font-semibold truncate">{item.name}</h4>
                 <p className="text-lg font-bold text-red-400 mt-1">{item.price}元</p>

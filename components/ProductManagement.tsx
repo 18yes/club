@@ -1,17 +1,12 @@
+
 import React, { useState } from 'react';
 import { Product } from '../types';
 import Modal from './Modal';
 import ProductForm from './ProductForm';
-
-const mockProducts: Product[] = [
-  { id: '1', name: '大师级陪练', price: 50, image: 'https://picsum.photos/seed/cat1/300/200', sales: 1200, category: '技能陪练', description: '由顶尖大师级玩家提供一对一陪练服务，快速提升您的游戏技巧和意识。' },
-  { id: '2', name: '极速上分套餐', price: 100, image: 'https://picsum.photos/seed/cat2/300/200', sales: 950, category: '段位提升', description: '专业团队为您提供高效的上分服务，安全可靠，助您轻松达到理想段位。' },
-  { id: '3', name: '团队开黑语音', price: 20, image: 'https://picsum.photos/seed/cat3/300/200', sales: 2500, category: '语音互动', description: '加入我们的语音频道，与队友实时沟通，享受团队游戏的乐趣。' },
-  { id: '4', name: '大神带队通关', price: 80, image: 'https://picsum.photos/seed/cat4/300/200', sales: 700, category: '副本攻略', description: '资深玩家带队，轻松攻克高难度副本，获取稀有装备。' },
-];
+import { allProducts } from '../mockData';
 
 const ProductManagement: React.FC = () => {
-    const [products, setProducts] = useState<Product[]>(mockProducts);
+    const [products, setProducts] = useState<Product[]>(allProducts);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
 
@@ -82,8 +77,10 @@ const ProductManagement: React.FC = () => {
                             <tr key={product.id} className="hover:bg-dark-border">
                                 <td className="px-5 py-4 border-b border-dark-border text-sm">
                                     <div className="flex items-center">
-                                        <div className="flex-shrink-0 w-16 h-12">
-                                            <img className="w-full h-full rounded-md object-cover" src={product.image} alt={product.name} />
+                                        <div className="flex-shrink-0 w-16 h-12 bg-dark-bg rounded-md">
+                                            {product.images && product.images.length > 0 && (
+                                                <img className="w-full h-full rounded-md object-cover" src={product.images[0]} alt={product.name} />
+                                            )}
                                         </div>
                                         <div className="ml-3">
                                             <p className="text-dark-text-primary whitespace-no-wrap font-semibold">{product.name}</p>

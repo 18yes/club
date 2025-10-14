@@ -3,12 +3,7 @@ import React, { useState } from 'react';
 import { Complaint, ComplaintStatus } from '../types';
 import Modal from './Modal';
 import NewComplaintForm from './NewComplaintForm';
-
-const mockComplaints: Complaint[] = [
-    { id: 'C1', orderId: 'O2', userId: 'U2', userName: '大神_001', subject: '服务时长不足', details: '陪练服务原定1小时，实际只有50分钟。', status: ComplaintStatus.Pending, createdAt: '2023-10-28' },
-    { id: 'C2', orderId: 'O1', userId: 'U1', userName: '玩家_8888', subject: '账号登录异常', details: '完成服务后，我的账号无法正常登录，怀疑有安全风险。', status: ComplaintStatus.InProgress, createdAt: '2023-10-27' },
-    { id: 'C3', orderId: 'O3', userId: 'U3', userName: '土豪哥', subject: '货不对板', details: '下单的是团队语音，但提供的是单人服务。', status: ComplaintStatus.Resolved, createdAt: '2023-10-26' },
-];
+import { allComplaints } from '../mockData';
 
 const getStatusColor = (status: ComplaintStatus) => {
     switch (status) {
@@ -20,7 +15,7 @@ const getStatusColor = (status: ComplaintStatus) => {
 }
 
 const ComplaintManagement: React.FC = () => {
-    const [complaints, setComplaints] = useState<Complaint[]>(mockComplaints);
+    const [complaints, setComplaints] = useState<Complaint[]>(allComplaints);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleStatusChange = (complaintId: string, newStatus: ComplaintStatus) => {

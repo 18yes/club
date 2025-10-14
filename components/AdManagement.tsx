@@ -1,26 +1,15 @@
+
 import React, { useState } from 'react';
 import { Announcement, AdSlot } from '../types';
 import Modal from './Modal';
 import AnnouncementForm from './AnnouncementForm';
 import Card from './Card';
-
-const mockAnnouncements: Announcement[] = [
-    { id: 'A1', content: '平台将于午夜进行系统维护，请提前安排好您的订单。', createdAt: '2023-10-28', isActive: true },
-    { id: 'A2', content: '国庆节活动上线！充值即送好礼，详情请见活动页面。', createdAt: '2023-09-30', isActive: true },
-    { id: 'A3', content: '严禁使用第三方插件，一经发现将永久封号处理。', createdAt: '2023-09-15', isActive: false },
-];
-
-const mockAdSlots: AdSlot[] = [
-    { id: 'ad-slot-1', name: '广告位 1 (首页)', content: '这是一个推广活动', link: '#' },
-    { id: 'ad-slot-2', name: '广告位 2 (分类页)', content: '分类页专属优惠', link: '#' },
-    { id: 'ad-slot-3', name: '广告位 3 (个人中心)', content: '邀请好友得奖励', link: '#' },
-    { id: 'ad-slot-4', name: '广告位 4 (个人中心)', content: '成为VIP打手', link: '#' },
-];
+import { allAnnouncements, allAdSlots } from '../mockData';
 
 type AdManagementTab = 'announcements' | 'adSlots';
 
 const AnnouncementsManager: React.FC = () => {
-    const [announcements, setAnnouncements] = useState(mockAnnouncements);
+    const [announcements, setAnnouncements] = useState(allAnnouncements);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingAnnouncement, setEditingAnnouncement] = useState<Partial<Announcement> | null>(null);
     
@@ -105,7 +94,7 @@ const AnnouncementsManager: React.FC = () => {
 }
 
 const AdSlotsManager: React.FC = () => {
-    const [adSlots, setAdSlots] = useState(mockAdSlots);
+    const [adSlots, setAdSlots] = useState(allAdSlots);
 
     const handleChange = (id: string, field: 'content' | 'link', value: string) => {
         setAdSlots(prev => prev.map(slot => slot.id === id ? { ...slot, [field]: value } : slot));
